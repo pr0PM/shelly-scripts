@@ -21,8 +21,8 @@ export PATH
 ####################
 
 # Lazy aliases
-
-alias la='ls -lah'
+alias ls='ls --color=auto --group-directories-first -t'
+alias l='ls -lAht'
 alias py='python3'
 alias jnote='jupyter-notebook'
 alias cpp='cd ~/Projects/cpp'
@@ -41,6 +41,9 @@ alias bajao='~/playMusic.sh'
 
 # Attach to new tmux session /give it a name
 alias tmuxn='tmux new-s -t' 
+
+# Activate pihole container after killing dnsmasq
+# alias pih='sudo ~/pi.sh'
 
 #\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\
 
@@ -66,4 +69,7 @@ PS1="\[\e[0;36m\]\u at \w \[\e[m\] \[\e[0;33m\]\$(git_prompt)\n\[\e[m\]";
 #\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\
 
 # D O N ' T    D E V I A T E    F R O M    T H E    P A T H
-export PATH=$PATH:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/pr0PM/.local/bin:/var/lib/snapd/snap/bin:/home/pr0PM/s_ware/jdk-14/bin
+export JAVA_HOME=/home/pr0PM/s_ware/jdk-14/
+export PATH=$PATH:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/pr0PM/.local/bin:/var/lib/snapd/snap/bin:$JAVA_HOME/bin
+
+
