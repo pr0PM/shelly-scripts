@@ -31,7 +31,7 @@ alias vi='vim'
 alias ..='cd ..'
 
 # Give this an arg in the form of a link to download
-alias ydl='youtube-dl -x --audio-format mp3 --audio-quality 0'
+alias ydl='youtube-dl -f bestaudio[ext=m4a] --extract-audio'
 
 # Just to give one more chance InCaSE
 alias rm='rm -i'
