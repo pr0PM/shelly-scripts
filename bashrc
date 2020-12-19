@@ -32,6 +32,10 @@ alias vi='nvim'
 alias ..='cd ..'
 alias ip='ip -c'
 alias nvim='~/s_ware/nvim.appimage'
+
+# list only directories
+alias d='find . -type d'
+
 # Give this an arg in the form of a link to download
 alias ydl='youtube-dl -f bestaudio[ext=m4a] --extract-audio'
 
