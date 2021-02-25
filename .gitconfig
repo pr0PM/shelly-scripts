@@ -1,0 +1,6 @@
+# This is Git's per-user configuration file.
+[user]
+# Please adapt and uncomment the following lines:
+name = pr0PM
+email = pr0PM@pm.me
+	signingkey = AA9E1CD685B303F2

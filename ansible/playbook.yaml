@@ -1,0 +1,82 @@
+- hosts: darkctf
+  vars:
+    ansible_ssh_private_key_file: "~/.ssh/id_rsa"
+  tasks:
+    - name: system-update
+      become: true
+      become_user: root
+      apt:
+        upgrade: safe 
+        update_cache: true
+
+    - name: install basic needs
+      become: true
+      become_user: root
+      apt:
+        name:
+        - zip
+        - wget
+        - git
+        - curl
+        - docker.io
+        - nginx
+        - certbot
+        - python-pip
+        state: present
+        update_cache: true   
+
+    - name: Install a dependency
+      become: true
+      pip:
+        name: pexpect >= 3.3
+
+    - name: Add user to docker group
+      become: true
+      user:
+        name: dark
+        group: docker
+    
+    - name: Download docker-compose
+      get_url:
+        url : https://github.com/docker/compose/releases/download/1.28.2/docker-compose-Linux-x86_64
+        dest: ~/docker-compose
+        mode: '+x'
+
+    - name: Check docker-compose exists
+      stat: path=~/docker-compose
+      register: docker_compose
+
+    - name: Move docker-compose to /usr/local/bin/docker-compose
+      become: true
+      command: mv /home/dark/docker-compose /usr/local/bin/docker-compose
+      when: docker_compose.stat.exists
+
+    - name: Download rctf install script
+      become: true
+      become_user: root
+      get_url:
+        url: https://get.rctf.redpwn.net
+        dest: ~/getRCTF.sh
+        mode: '+x'
+
+    - name: install the script and start rctf
+      become: true
+      become_user: root
+      expect:
+        chdir: ~/
+        command: bash ./getRCTF.sh
+        responses:
+          "Would you like to start rCTF now (y/N)?": "N"
+
+    - name: karma's ssh
+      authorized_key:        
+        user: dark
+        state: present
+        key: '{{ item }}'
+      with_items:
+        - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDQ/mUubFX0uUh5N8D4Hms2dxT0jxyfmmlLBvLQHI1qWlcM+pxO5ohIqenPELZkPfGh7cqW1QjYQlF+VWrAD9FiDlY7UzNqcQkpf9nnqXDavmjacZGBm972d1zKhhZbkqoRiRboFECc7oPSxp0GsQqqMUPzUgSSDH0nua/yZjQgpZD60JiTeae5OA3xxa3x230ZKGqkfVPWlpSlL6TjrnhljENVb5CAbClsHBxRxDxpng0NYUGWk9/xlJcQondhoAWLfYsyen3c1QR7/y3q9dYudwIkW67lqOAkvg3XHTx4RdRTCFY+hdKEuriLXET23n0iZwWeWk1ejN6r44qQupMNo4SYWl/C01lKcR7BGhrT8a9wUUv6WXJah15P2BlIq+2FhLkoj6H4b/VVjkm1hKLftwJsHB0iFFUfqsnPhIAeEtrCNrWeuhownyeZAbI9+hI91aUF6HCUemgIMs7KP9pbrtiEWWgX57wYGs0ghNpaHporPSyvFV/wYpPbUjNyGQOyQzvpVKT2PWYBw44Y2QiywIe/Zhxd3PANMjJhaHoJbfnpSUkuFranMNzgyN3BmsWjLCAvrZFlNFyJKyOxBHIaA5kyxUqhZJ2oQcSYLyIqs875+YewwrrlfAZRxaR3uf3jSiZon1iq0SSoXZ/JgdLlHyqbQUFkJqJXT7VWbRRT0w== karma@karma
+        - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCgDYtObwLv0hLlSMQ7tJNJcjtnLSs0MAsJBq3M8kuPqCVt+nOd29KRltnYF0/ab7bHuZ3lQIgkl2GXQgj/cnmKK2PsU3hPXFrtNlwlbOgAnYBmFTyk5TQ/15arqnjZD8UkMSO+U2ab/zI7S5Sx1iLy4iEXdihsTYIJMNEf5K/J4BxyhEu0hZeaAHbYc6H7grHepElBqzcgyhNWCYPj4lEJrA8EUbVl6OIw8rZcLu00F9KJrEPheZD1iQWAN66RpQ2a5etJMgYvXO9tn/0N1bNYozB79W2VScG3+Sm9wSehZdtNfTL9N4WHTfwrrQFLsr8bzrgjJiP31OYJdOfcwbEKYxisp/nKBllWv8Wllus1gxsVtGdo0sZCk30WiIzkSQXEgjQ5nWyhR8nSgZKelBsQs4e8kIgHUsT8oTzq8PQt2GdyM4B49mpuJ02N/ds2DnCgGPsx0WA9iZM7tPmeABfCgmJWugAHfFaNNBsQ85MOXs2N0EQox6Jsnx4w9HyfgbM= mrghost@DESKTOP-00OEJGA 
+
+        - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCz1p+c+rnmQUiEbYqeHY85zh1YrUErQc2r2D3GzqkgE3r1cBNFDlSID0EC3//ySLZc+BXuPkgK1E8MH+H4jOHwB8sy7CLUghBe2ZLXNs2V9XukrDcR3IQKczcn6/WEQ20+BMXBC3tUnCbOnhTxOjbTfi3DInGkw4p5HCiUZgc2gQhil8JGlXM3uINnQkLMtUBtoyQmUdNshv8qtEWH4ETEIvvyJJeusBnP/RxczGDebVjrKUSLmQRSbEOcSlswzAYUijWNkcdSKiBPGNP11ytuG9h5hkgmBO1r9tB6nq548kFhuLPnmz5jzXP3Nvk2/iNR7wYyvbKzviCbRi/nfpRwYZTnKEeNi/ExMaSomtj1ua3rurVQ4DRRqvkPvacDCD72iybS4VcE+i8qA5laWlVPvQqQkILOawdUnv9z3j3gB6xcwNA+Y2+XzZS+nedabgJxoYlOFQ/5xpvRXEmVbZiQ2/dyHrYrrNO4IlbKeSsKZhTGUgKros2Lz1pYMrV6JGE= whitewolf@Wolf-Den
+
+        - https://github.com/pr0PM.keys
