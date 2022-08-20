@@ -6,17 +6,17 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
 fi
 
 # If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:/usr/local/bin:$PATH
-
+export PATH="$HOME/bin:/usr/local/bin:${KREW_ROOT:-$HOME/.krew}/bin:/usr/local/lib/node_modules:$PATH"
+# source ~/.oh-my-zsh/plugins/zsh-autocomplete/zsh-autocomplete.plugin.zsh
 # Path to your oh-my-zsh installation.
-export ZSH="/home/pr0PM/.oh-my-zsh"
+export ZSH="/Users/prateek/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
+#ZSH_THEME="robbyrussell"
 ZSH_THEME="powerlevel10k/powerlevel10k"
-
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
 # a theme from this variable instead of looking in $ZSH/themes/
@@ -30,14 +30,13 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Case-sensitive completion must be off. _ and - will be interchangeable.
 # HYPHEN_INSENSITIVE="true"
 
-# Uncomment the following line to disable bi-weekly auto-update checks.
-# DISABLE_AUTO_UPDATE="true"
-
-# Uncomment the following line to automatically update without prompting.
-# DISABLE_UPDATE_PROMPT="true"
+# Uncomment one of the following lines to change the auto-update behavior
+# zstyle ':omz:update' mode disabled  # disable automatic updates
+# zstyle ':omz:update' mode auto      # update automatically without asking
+# zstyle ':omz:update' mode reminder  # just remind me to update when it's time
 
 # Uncomment the following line to change how often to auto-update (in days).
-# export UPDATE_ZSH_DAYS=13
+# zstyle ':omz:update' frequency 13
 
 # Uncomment the following line if pasting URLs and other text is messed up.
 # DISABLE_MAGIC_FUNCTIONS="true"
@@ -52,8 +51,9 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # ENABLE_CORRECTION="true"
 
 # Uncomment the following line to display red dots whilst waiting for completion.
-# Caution: this setting can cause issues with multiline prompts (zsh 5.7.1 and newer seem to work)
-# See https://github.com/ohmyzsh/ohmyzsh/issues/5765
+# You can also set it to another string to have that shown instead of the default red dots.
+# e.g. COMPLETION_WAITING_DOTS="%F{yellow}waiting...%f"
+# Caution: this setting can cause issues with multiline prompts in zsh < 5.7.1 (see #5765)
 # COMPLETION_WAITING_DOTS="true"
 
 # Uncomment the following line if you want to disable marking untracked files
@@ -77,7 +77,9 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git)
+#plugins=(git kubectl kube-ps1)
+#plugins=(git kubectl kube-ps1)
+plugins=(git kubectl safe-paste)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -107,35 +109,29 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-# Lazy aliases
-alias ls='ls --color=auto --group-directories-first -t'
-alias l='ls -lAht'
-alias py='python3'
-alias jnote='jupyter-notebook'
-alias cpp='cd ~/Projects/cpp'
-alias cl='clear'
-alias vi='nvim'
-alias ..='cd ..'
-alias ip='ip -c'
-alias nvim='~/s_ware/nvim.appimage'
+alias cl="clear"
+alias py="python3"
+alias k="kubectl"
+alias kc="kubectl --kubeconfig"
+alias vi="nvim"
+alias ls="lsd"
 
-# list only directories
-alias d='find . -type d'
+alias ghpr="gh pr create --base"
+#source <(kubectl completion bash)
+#complete -F __start_kubectl k
 
-# Give this an arg in the form of a link to download
-alias ydl='youtube-dl -f bestaudio[ext=m4a] --extract-audio'
-
-# Just to give one more chance InCaSE
-alias rm='rm -i'
-
-# My music script 
-alias bajao='~/playMusic.sh' 
-
-# Attach to new tmux session /give it a name
-alias tmuxn='tmux new-s -t' 
-
-# activate py venev
-alias act='source bin/activate'
+# krew path
+export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+export PATH="/opt/homebrew/opt/openssl@3/bin:$PATH"
+export PATH="/opt/homebrew/opt/sqlite/bin:$PATH"
+export PATH="/opt/homebrew/opt/libpcap/bin:$PATH"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+bindkey "^[^[[C" forward-word
+bindkey "^[^[[D" backward-word
+
+export c="--kubeconfig"
